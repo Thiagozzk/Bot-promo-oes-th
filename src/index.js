@@ -18,4 +18,11 @@ app.post("/api/scan",auth,async(q,s)=>{try{s.json(await scan())}catch(e){s.statu
 app.post("/api/send/:id",auth,async(q,s)=>{const o=db.prepare("SELECT * FROM offers WHERE id=?").get(q.params.id);if(!o)return s.sendStatus(404);try{await wa.send(msg({title:o.title,store:o.store,url:o.url,image:o.image,oldPrice:o.old_price,price:o.price,discount:o.discount}),o.image);db.prepare("UPDATE offers SET sent_at=? WHERE id=?").run(new Date().toISOString(),o.id);s.json({ok:true})}catch(e){s.status(500).json({error:e.message})}});
 app.get("/whatsapp",(q,s)=>{const st=wa.status();s.send(`<!doctype html><meta charset=utf-8><style>body{font-family:system-ui;background:#101114;color:#fff;text-align:center;padding:40px}img{background:#fff;padding:15px;max-width:320px}.ok{color:#5fda8b}</style><h1>WhatsApp</h1>${st.ready?`<h2 class=ok>✅ Conectado</h2><p>Grupos: ${st.groups.map(g=>g.name).join(", ")||"aguardando cache"}</p>`:st.qrData?`<p>WhatsApp → Aparelhos conectados → Conectar aparelho</p><img src="${st.qrData}"><p>Atualize esta página depois de escanear.</p>`:"<p>Gerando QR... atualize em alguns segundos.</p>"}`)});
 setInterval(()=>scan().catch(console.error),Math.max(1,Number(process.env.SCAN_MINUTES||15))*60000);
-app.listen(port,"0.0.0.0",()=>console.log(`Bot Promo PC online: porta ${port}`));
+app.listen(port, "0.0.0.0", () => {
+  console.log(`Bot Promo PC online: porta ${port}`);
+
+  setTimeout(() => {
+    console.log("Solicitando inicialização do WhatsApp...");
+    wa.initialize();
+  }, 3000);
+});
