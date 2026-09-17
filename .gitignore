@@ -1,23 +1,5 @@
-# Node modules
-node_modules/
-Whatsapp/node_modules/
-
-# Sessões e cache
-Whatsapp/.wwebjs_auth/
-Whatsapp/.wwebjs_cache/
-
-# Python
-__pycache__/
-*.pyc
-*.pyo
-*.pyd
-
-# Logs e temporários
-*.log
-*.tmp
-
-# Mac OS
-.DS_Store
-
-# Arquivos de ambiente
+node_modules
 .env
+data/*.db*
+.wwebjs_auth
+.wwebjs_cache
